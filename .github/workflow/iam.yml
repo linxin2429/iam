@@ -1,0 +1,46 @@
+name: iamCI
+
+on:
+  push:
+    branches: _ '*'
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  icmci:
+    name: Test with go ${{ matrix.go-version }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    environment: 
+      name: icmci
+    strategy:
+      matrix:
+        go-version: [1.20, 1.21]
+        os: [ubuntu-latest, macOS-latest]
+
+    steps:
+      
+      - name: Set up Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+        id: go
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+      
+      - name: Run go modules Tidy
+        run: go mod tidy
+
+      - name: lint
+        run: golangci-lint run -c .golangci.yaml ./...
+
+      - name: test
+        run: | 
+          go test -race -cover -coverprofile=./coverage.out -timeout=10m -shuffle=on -short -v ./...
+          sed -i '/mock_.*.go/d' $(OUTPUT_DIR)/coverage.out
+          go tool cover -html=./coverage.out -o ./coverage.html
+
+      - name: Collect Test Coverage File
+        uses: actions/upload-artifact@v1.0.0
+        with:
+          name: main-output
+          path: ./coverage.out
