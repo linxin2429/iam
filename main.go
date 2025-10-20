@@ -1,8 +1,10 @@
+// Copyright 2025 Deng Xinlin <dengxinlin2429@gmail.com>. All rights reserved.
+
 package main
 
 import "fmt"
 
-func main(){
+func main() {
 	fmt.Println("Hello World")
 	fmt.Println("Hello World1")
 }

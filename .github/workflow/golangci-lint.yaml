@@ -1,3 +1,5 @@
+# Copyright 2025 Deng Xinlin <dengxinlin2429@gmail.com>. All rights reserved.
+
 name: golangci-lint
 on:
   push:
